@@ -166,17 +166,17 @@ class GameScene extends Phaser.Scene {
 
 	changeBallVelocityOnBounce() {
 		if (this.ball.body.x === this.player.body.x) {
-			const initialXSpeed = this.randomIntFromInterval(400, 600);
+			const initialXSpeed = this.randomIntFromInterval(100, 800);
 			this.ball.setVelocityX(initialXSpeed);
 		}
 
 		if (this.ball.body.x === sizes.width || this.ball.body.x === 0) {
-			const initialXSpeed = this.randomIntFromInterval(400, 600);
+			const initialXSpeed = this.randomIntFromInterval(100, 800);
 			this.ball.setVelocityX(initialXSpeed);
 		}
 
 		if (this.ball.body.y === sizes.height || this.ball.body.y === 0) {
-			const initialYSpeed = this.randomIntFromInterval(400, 600);
+			const initialYSpeed = this.randomIntFromInterval(100, 800);
 			this.ball.setVelocityY(initialYSpeed);
 		}
 	}
