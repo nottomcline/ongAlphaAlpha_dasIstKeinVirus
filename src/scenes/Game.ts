@@ -17,6 +17,7 @@ export class Game extends Scene {
 	private textLevel: Phaser.GameObjects.Text;
 	private obstacles: Phaser.Physics.Arcade.Group;
 	private loseAudio: Phaser.Sound.BaseSound;
+	private bgAudio: Phaser.Sound.BaseSound;
 	private dvdHitSound: Phaser.Sound.BaseSound;
 	private geld: number = 100; // Initial geld for the player
 	private textGeld: Phaser.GameObjects.Text;
@@ -77,6 +78,10 @@ export class Game extends Scene {
 		this.obstacles = this.physics.add.group();
 		this.loseAudio = this.sound.add("loseSound"); // Assign the audio object
 		this.dvdHitSound = this.sound.add("dvdHitSound"); // Assign the audio object
+		this.bgAudio = this.sound.add("bgMusic"); // Assign the audio object
+		if (!this.bgAudio.isPlaying) {
+			this.bgAudio.play();
+		}
 
 		// Set up a timed event to spawn obstacles every few seconds
 		this.time.addEvent({
@@ -168,25 +173,33 @@ export class Game extends Scene {
 
 	// Function to spawn obstacles
 	spawnObstacle() {
-		const x = Phaser.Math.Between(50, this.physics.world.bounds.width - 50);
-		const y = Phaser.Math.Between(
+		const x = this.randomIntFromInterval(
+			50,
+			this.physics.world.bounds.width - 50
+		);
+		const y = this.randomIntFromInterval(
 			50,
 			this.physics.world.bounds.height - 50
 		);
 
 		// Create a new obstacle at a random position
 		const obstacle = this.obstacles.create(x, y, "obstacle");
-		obstacle.setScale(0.2);
+		obstacle.setScale(0.5);
 		obstacle.setImmovable(true); // Obstacles should not move when hit by other objects
 		obstacle.setCollideWorldBounds(true);
 
-		// Optionally add movement (e.g., vertical oscillation)
+		// Optional horizontal movement for added randomness (if desired)
 		this.tweens.add({
 			targets: obstacle,
-			x: { start: y - 50, to: y + 50 },
+			x: { start: x - 50, to: x + 50 }, // Movement along the X-axis
 			duration: 2000,
 			yoyo: true,
 			repeat: -1,
+		});
+
+		this.time.delayedCall(10000, () => {
+			// Destroy the obstacle after the specified time
+			obstacle.destroy();
 		});
 	}
 
@@ -229,7 +242,7 @@ export class Game extends Scene {
 			this.textGeld.setText(`Geld: ${this.geld}`);
 			this.textScore.setText(`Punkte: ${this.points}`);
 		} else {
-			alert("Not enough geld!");
+			this.scene.start("Shop");
 		}
 	}
 
@@ -277,14 +290,12 @@ export class Game extends Scene {
 
 	update() {
 		// if ball is behind player game is over
+		this.player.body.setVelocityY(0);
 		if (this.ball.body.x > this.player.body.x) {
-			this.loseAudio.play();
-			this.ball.disableBody(true, true);
 			this.resetGame();
 			this.scene.start("GameOver", { points: this.points });
 			return;
 		}
-		this.player.body.setVelocityY(0);
 
 		if (this.keyboardInput.up.isDown) {
 			this.player.body.setVelocityY(-650);
@@ -360,6 +371,9 @@ export class Game extends Scene {
 	}
 
 	resetGame() {
+		this.bgAudio.pause();
+		this.ball.disableBody(true, true);
+		this.loseAudio.play();
 		// Hide "Ende" text and reset game variables
 		this.textScore.setText("Punkte: 0");
 

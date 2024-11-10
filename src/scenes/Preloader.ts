@@ -36,6 +36,7 @@ export class Preloader extends Scene {
 			"loseSound",
 			"GUARDIANO_DELLE_GALASSIE_E_DELLIPERSPAZIO.mp3"
 		);
+		this.load.audio("bgMusic", "bgMusic.mp3");
 		this.load.audio("dvdHitSound", "-2InDenChat.mp3");
 	}
 

@@ -75,7 +75,7 @@ export class Shop extends Scene {
 			});
 
 		this.add
-			.text(512, 420, "zurück?", {
+			.text(512, 520, "zurück?", {
 				fontFamily: "Arial Black",
 				fontSize: 38,
 				color: "#ffffff",
@@ -86,7 +86,7 @@ export class Shop extends Scene {
 			.setOrigin(0.5);
 
 		this.yes1Text = this.add
-			.text(450, 480, "Ja", {
+			.text(450, 580, "Ja", {
 				fontFamily: "Arial Black",
 				fontSize: 38,
 				color: "#ffff00", // Start with "Yes" highlighted
@@ -102,7 +102,7 @@ export class Shop extends Scene {
 			});
 
 		this.yes2Text = this.add
-			.text(550, 480, "Ja", {
+			.text(550, 580, "Ja", {
 				fontFamily: "Arial Black",
 				fontSize: 38,
 				color: "#ffffff",
@@ -143,8 +143,8 @@ export class Shop extends Scene {
 		this.inputField.type = "text";
 		this.inputField.placeholder = "Kreditkarte Nummer...";
 		this.inputField.style.position = "absolute";
-		this.inputField.style.left = "30%";
-		this.inputField.style.top = "360px"; // Position in the center of the screen
+		this.inputField.style.left = "50%";
+		this.inputField.style.top = "50%"; // Position in the center of the screen
 		this.inputField.style.transform = "translateX(-50%)";
 		this.inputField.style.fontSize = "30px";
 		this.inputField.style.padding = "10px";
