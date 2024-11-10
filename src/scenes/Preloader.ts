@@ -30,7 +30,7 @@ export class Preloader extends Scene {
 		this.load.image("paddle", "paddle.png");
 		this.load.image("dvdLogo", "dvd_logo.png");
 		this.load.image("memeBall", "memeBall.png");
-		this.load.image("powerUp", "dvd_logo.png");
+		this.load.image("powerUp", "powerUp.png");
 		this.load.image("obstacle", "obstacle.png");
 		this.load.audio(
 			"loseSound",

@@ -243,7 +243,7 @@ export class Game extends Scene {
 
 		const x = Phaser.Math.Between(100, 900);
 		const y = Phaser.Math.Between(100, 700);
-		this.powerUp = this.physics.add.sprite(x, y, "powerUp").setScale(0.5);
+		this.powerUp = this.physics.add.sprite(x, y, "powerUp").setScale(0.75);
 		this.physics.add.overlap(
 			this.ball,
 			this.powerUp,
@@ -423,7 +423,7 @@ export class Game extends Scene {
 			this.spawnPowerUp();
 		}
 
-		const memeBallSpawnChance = 80;
+		const memeBallSpawnChance = 70;
 		const randomMemeBallChance = this.randomIntFromInterval(1, 100);
 		if (randomMemeBallChance <= memeBallSpawnChance) {
 			this.spawnMemeBall();
