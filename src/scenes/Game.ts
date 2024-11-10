@@ -29,10 +29,11 @@ export class Game extends Scene {
 
 	private memeBall: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
 	private memeVideos: string[] = [
-		"https://www.youtube.com/watch?v=dQw4w9WgXcQ", // Example meme video (Rickroll)
-		"https://www.youtube.com/watch?v=MtN1YnoL46Q", // Another meme video
-		"https://www.youtube.com/watch?v=9bZkp7q19f0", // Gangnam Style meme
-		// Add more meme URLs here...
+		"https://www.youtube.com/watch?v=LyRBIeAw8ak",
+		"https://www.youtube.com/watch?v=iwQK8YHzzpM",
+		"https://www.youtube.com/watch?v=buc64u6Q_oA",
+		"https://www.youtube.com/watch?v=ZVllS9y6mBg",
+		"https://www.youtube.com/shorts/J-gVpUAVC1U",
 	];
 
 	constructor() {
