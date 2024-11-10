@@ -85,15 +85,6 @@ export class Game extends Scene {
 			loop: true,
 		});
 
-		// Add collision detection between player and obstacles
-		this.physics.add.collider(
-			this.player,
-			this.obstacles,
-			this.hitObstacle,
-			undefined,
-			this
-		);
-
 		if (this.input.keyboard) {
 			this.keyboardInput = this.input.keyboard.createCursorKeys();
 		}
@@ -184,13 +175,14 @@ export class Game extends Scene {
 
 		// Create a new obstacle at a random position
 		const obstacle = this.obstacles.create(x, y, "obstacle");
+		obstacle.setScale(0.2);
 		obstacle.setImmovable(true); // Obstacles should not move when hit by other objects
 		obstacle.setCollideWorldBounds(true);
 
 		// Optionally add movement (e.g., vertical oscillation)
 		this.tweens.add({
 			targets: obstacle,
-			y: { start: y - 50, to: y + 50 },
+			x: { start: y - 50, to: y + 50 },
 			duration: 2000,
 			yoyo: true,
 			repeat: -1,
@@ -303,6 +295,15 @@ export class Game extends Scene {
 			this.dvdLogo,
 			this.player,
 			this.onDVDLogoHit,
+			undefined,
+			this
+		);
+
+		// Add collision detection between player and obstacles
+		this.physics.add.collider(
+			this.player,
+			this.obstacles,
+			this.hitObstacle,
 			undefined,
 			this
 		);
