@@ -9,6 +9,10 @@ export class Game extends Scene {
 	private keyboardInput: Phaser.Types.Input.Keyboard.CursorKeys;
 	private points: number = 0;
 	private textScore: Phaser.GameObjects.Text;
+	private level: number = 1;
+	private experience: number = 0;
+	private experienceToLevelUp: number = 2;
+	private textLevel: Phaser.GameObjects.Text;
 
 	constructor(
 		player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody,
@@ -76,6 +80,12 @@ export class Game extends Scene {
 
 		// Create score text
 		this.textScore = this.add.text(10, 10, "Punkte: 0", {
+			fontFamily: "Monaco, Courier, monospace",
+			fontSize: "25px",
+			color: "#fff",
+		});
+
+		this.textLevel = this.add.text(10, 40, "Level: 1", {
 			fontFamily: "Monaco, Courier, monospace",
 			fontSize: "25px",
 			color: "#fff",
@@ -152,6 +162,24 @@ export class Game extends Scene {
 
 	ifPlayerGetsHit() {
 		this.points++;
+		this.experience++;
 		this.textScore.setText(`Punkte: ${this.points}`);
+
+		// Check if the player has gained enough experience to level up
+		if (this.experience >= this.experienceToLevelUp) {
+			this.levelUp();
+		}
+	}
+
+	levelUp() {
+		this.level++;
+		this.experience = 0; // Reset experience for the new level
+		this.experienceToLevelUp += 2; // Increase experience required for next level
+		this.textLevel.setText(`Level: ${this.level}`);
+
+		// Increase ball speed by 20% each level
+		const currentVelocityX = this.ball.body.velocity.x;
+		const currentVelocityY = this.ball.body.velocity.y;
+		this.ball.setVelocity(currentVelocityX * 1.2, currentVelocityY * 1.2);
 	}
 }
