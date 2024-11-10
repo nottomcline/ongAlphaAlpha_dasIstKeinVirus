@@ -3,16 +3,18 @@ import { Scene } from "phaser";
 export class Game extends Scene {
 	camera: Phaser.Cameras.Scene2D.Camera;
 	background: Phaser.GameObjects.Image;
-	msg_text: Phaser.GameObjects.Text;
 	private player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
 	private ball: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
 	private keyboardInput: Phaser.Types.Input.Keyboard.CursorKeys;
+	private powerUp: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody | null =
+		null;
 	private points: number = 0;
 	private textScore: Phaser.GameObjects.Text;
 	private level: number = 1;
 	private experience: number = 0;
 	private experienceToLevelUp: number = 2;
 	private textLevel: Phaser.GameObjects.Text;
+	private powerUpActive: boolean = false;
 
 	constructor(
 		player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody,
@@ -47,9 +49,7 @@ export class Game extends Scene {
 			"ball" // key of image for the sprite
 		);
 		this.ball.setVisible(true);
-		const initialXSpeed = this.randomIntFromInterval(100, 800);
-		const initialYSpeed = this.randomIntFromInterval(100, 800);
-		this.ball.body.setVelocity(initialXSpeed, initialYSpeed);
+		this.setBallInitialVelocity();
 
 		this.player = this.physics.add.sprite(
 			this.physics.world.bounds.width - (this.ball.body.width / 2 + 1), // x position
@@ -92,6 +92,21 @@ export class Game extends Scene {
 		});
 	}
 
+	spawnPowerUp() {
+		if (this.powerUp) return;
+
+		const x = Phaser.Math.Between(100, 900);
+		const y = Phaser.Math.Between(100, 700);
+		this.powerUp = this.physics.add.sprite(x, y, "powerUp").setScale(0.5);
+		this.physics.add.overlap(
+			this.ball,
+			this.powerUp,
+			this.collectPowerUp,
+			undefined,
+			this
+		);
+	}
+
 	update() {
 		// if ball is behind player game is over
 		if (this.ball.body.x > this.player.body.x) {
@@ -109,6 +124,45 @@ export class Game extends Scene {
 		}
 
 		this.changeBallVelocityOnBounce();
+	}
+
+	collectPowerUp() {
+		if (!this.powerUp) return;
+
+		this.powerUp.destroy();
+		this.powerUp = null;
+
+		// Choose a random effect for the power-up
+		const effects = ["increaseSize", "slowBall", "extraPoints"];
+		const effect = Phaser.Utils.Array.GetRandom(effects);
+
+		switch (effect) {
+			case "increaseSize":
+				this.player.setScale(1.5);
+				this.time.delayedCall(
+					5000,
+					() => this.player.setScale(1),
+					[],
+					this
+				);
+				break;
+			case "slowBall":
+				this.ball.setVelocity(
+					this.ball.body.velocity.x * 0.5,
+					this.ball.body.velocity.y * 0.5
+				);
+				this.time.delayedCall(
+					5000,
+					this.setBallInitialVelocity,
+					[],
+					this
+				);
+				break;
+			case "extraPoints":
+				this.points += 5;
+				this.textScore.setText(`Punkte: ${this.points}`);
+				break;
+		}
 	}
 
 	resetGame() {
@@ -169,6 +223,12 @@ export class Game extends Scene {
 		if (this.experience >= this.experienceToLevelUp) {
 			this.levelUp();
 		}
+
+		const spawnChance = 50; // percentage chance
+		const randomNumber = this.randomIntFromInterval(1, 100);
+		if (randomNumber <= spawnChance) {
+			this.spawnPowerUp();
+		}
 	}
 
 	levelUp() {
@@ -181,5 +241,11 @@ export class Game extends Scene {
 		const currentVelocityX = this.ball.body.velocity.x;
 		const currentVelocityY = this.ball.body.velocity.y;
 		this.ball.setVelocity(currentVelocityX * 1.2, currentVelocityY * 1.2);
+	}
+
+	setBallInitialVelocity() {
+		const initialXSpeed = this.randomIntFromInterval(100, 800);
+		const initialYSpeed = this.randomIntFromInterval(100, 800);
+		this.ball.setVelocity(initialXSpeed, initialYSpeed);
 	}
 }
