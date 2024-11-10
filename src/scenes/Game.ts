@@ -8,6 +8,7 @@ export class Game extends Scene {
 	private keyboardInput: Phaser.Types.Input.Keyboard.CursorKeys;
 	private powerUp: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody | null =
 		null;
+	private dvdLogo: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
 	private points: number = 0;
 	private textScore: Phaser.GameObjects.Text;
 	private level: number = 1;
@@ -57,6 +58,19 @@ export class Game extends Scene {
 			this.physics.world.bounds.height / 2, // y position
 			"paddle" // key of image for the sprite
 		);
+
+		// DVD Logo initialization (enemy)
+		this.dvdLogo = this.physics.add.sprite(
+			this.physics.world.bounds.width / 2, // Initial X
+			this.physics.world.bounds.height / 2, // Initial Y
+			"dvdLogo" // Sprite key
+		);
+		this.dvdLogo.setVelocity(
+			Phaser.Math.Between(100, 200),
+			Phaser.Math.Between(100, 200)
+		); // Random initial velocity
+		this.dvdLogo.setBounce(1, 1); // Make the logo bounce off walls
+		this.dvdLogo.setCollideWorldBounds(true); // Keep the logo within the bounds of the screen
 
 		this.obstacles = this.physics.add.group();
 		this.loseAudio = this.sound.add("loseSound"); // Assign the audio object
@@ -178,7 +192,23 @@ export class Game extends Scene {
 			this.player.body.setVelocityY(650);
 		}
 
+		this.physics.add.collider(
+			this.dvdLogo,
+			this.player,
+			this.onDVDLogoHit,
+			undefined,
+			this
+		);
+
 		this.changeBallVelocityOnBounce();
+	}
+
+	onDVDLogoHit() {
+		this.points -= 2; // Deduct points when the logo hits the player
+		this.textScore.setText(`Punkte: ${this.points}`);
+
+		// Optionally: play a sound effect or trigger some animation
+		this.loseAudio.play();
 	}
 
 	collectPowerUp() {

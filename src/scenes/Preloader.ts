@@ -28,6 +28,7 @@ export class Preloader extends Scene {
 		this.load.image("logo", "logo.png");
 		this.load.image("ball", "ball.png");
 		this.load.image("paddle", "paddle.png");
+		this.load.image("dvdLogo", "dvd-logo.png"); // Make sure to have the DVD logo image
 		this.load.audio(
 			"loseSound",
 			"GUARDIANO_DELLE_GALASSIE_E_DELLIPERSPAZIO.mp3"
