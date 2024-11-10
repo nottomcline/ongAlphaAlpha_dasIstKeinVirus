@@ -29,6 +29,9 @@ export class Preloader extends Scene {
 		this.load.image("ball", "ball.png");
 		this.load.image("paddle", "paddle.png");
 		this.load.image("dvdLogo", "dvd_logo.png");
+		this.load.image("memeBall", "memeBall.png");
+		this.load.image("powerUp", "dvd_logo.png");
+		this.load.image("obstacle", "dvd_logo.png");
 		this.load.audio(
 			"loseSound",
 			"GUARDIANO_DELLE_GALASSIE_E_DELLIPERSPAZIO.mp3"

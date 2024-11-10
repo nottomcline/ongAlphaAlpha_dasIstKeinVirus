@@ -27,8 +27,7 @@ export class Game extends Scene {
 	// @ts-ignore
 	private buyPointsButton: Phaser.GameObjects.Text;
 
-	private memeBall: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody | null =
-		null;
+	private memeBall: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
 	private memeVideos: string[] = [
 		"https://www.youtube.com/watch?v=dQw4w9WgXcQ", // Example meme video (Rickroll)
 		"https://www.youtube.com/watch?v=MtN1YnoL46Q", // Another meme video
@@ -52,13 +51,8 @@ export class Game extends Scene {
 		this.background = this.add.image(512, 384, "background");
 		this.background.setAlpha(0.5);
 
-		this.ball = this.physics.add.sprite(
-			this.physics.world.bounds.width / 2, // x position
-			this.physics.world.bounds.height / 2, // y position
-			"ball" // key of image for the sprite
-		);
-		this.ball.setVisible(true);
-		this.setBallInitialVelocity();
+		this.createMemeBall();
+		this.createBall();
 
 		this.player = this.physics.add.sprite(
 			this.physics.world.bounds.width - (this.ball.body.width / 2 + 1), // x position
@@ -110,8 +104,6 @@ export class Game extends Scene {
 		});
 
 		this.player.setCollideWorldBounds(true);
-		this.ball.setCollideWorldBounds(true);
-		this.ball.setBounce(1, 1);
 		this.player.setImmovable(true);
 		this.physics.add.collider(
 			this.ball,
@@ -191,7 +183,7 @@ export class Game extends Scene {
 		);
 
 		// Create a new obstacle at a random position
-		const obstacle = this.obstacles.create(x, y, "obstacleImage");
+		const obstacle = this.obstacles.create(x, y, "obstacle");
 		obstacle.setImmovable(true); // Obstacles should not move when hit by other objects
 		obstacle.setCollideWorldBounds(true);
 
@@ -282,30 +274,9 @@ export class Game extends Scene {
 	}
 
 	spawnMemeBall() {
-		if (this.memeBall) return; // Prevent multiple meme balls from spawning
-
-		const x = this.randomIntFromInterval(
-			100,
-			this.physics.world.bounds.width - 100
-		);
-		const y = this.randomIntFromInterval(
-			100,
-			this.physics.world.bounds.height - 100
-		);
-
-		// Create the meme ball sprite and give it properties
-		this.memeBall = this.physics.add.sprite(x, y, "memeBall").setScale(0.5);
-		this.memeBall.setCollideWorldBounds(true);
-		this.memeBall.setBounce(1, 1); // Make it bounce around
-
-		// You can add some random velocity for the meme ball to move around
-		this.memeBall.setVelocity(
-			Phaser.Math.Between(-200, 200),
-			Phaser.Math.Between(-200, 200)
-		);
-
 		// Add a click event to the meme ball sprite to open the meme video
 		if (this.memeBall) {
+			this.memeBall.setVisible(true);
 			this.memeBall.setInteractive();
 			this.memeBall.on("pointerdown", this.openMemeVideo, this);
 		}
@@ -474,5 +445,36 @@ export class Game extends Scene {
 		const initialXSpeed = this.randomIntFromInterval(100, 800);
 		const initialYSpeed = this.randomIntFromInterval(100, 800);
 		this.ball.setVelocity(initialXSpeed, initialYSpeed);
+	}
+
+	createMemeBall() {
+		const x = this.randomIntFromInterval(
+			100,
+			this.physics.world.bounds.width - 100
+		);
+		const y = this.randomIntFromInterval(
+			100,
+			this.physics.world.bounds.height - 100
+		);
+		this.memeBall = this.physics.add.sprite(x, y, "memeBall");
+		this.memeBall.setCollideWorldBounds(true);
+		this.memeBall.setBounce(1, 1);
+		this.memeBall.setVelocity(
+			Phaser.Math.Between(-200, 200),
+			Phaser.Math.Between(-200, 200)
+		);
+		this.memeBall.setVisible(false);
+	}
+
+	createBall() {
+		this.ball = this.physics.add.sprite(
+			this.physics.world.bounds.width / 2, // x position
+			this.physics.world.bounds.height / 2, // y position
+			"ball" // key of image for the sprite
+		);
+		this.ball.setVisible(true);
+		this.ball.setCollideWorldBounds(true);
+		this.ball.setBounce(1, 1);
+		this.setBallInitialVelocity();
 	}
 }
