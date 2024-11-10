@@ -14,7 +14,7 @@ export class Game extends Scene {
 	private experience: number = 0;
 	private experienceToLevelUp: number = 2;
 	private textLevel: Phaser.GameObjects.Text;
-	private powerUpActive: boolean = false;
+	private obstacles: Phaser.Physics.Arcade.Group;
 
 	constructor(
 		player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody,
@@ -57,6 +57,25 @@ export class Game extends Scene {
 			"paddle" // key of image for the sprite
 		);
 
+		this.obstacles = this.physics.add.group();
+
+		// Set up a timed event to spawn obstacles every few seconds
+		this.time.addEvent({
+			delay: 3000, // Spawn every 3 seconds
+			callback: this.spawnObstacle,
+			callbackScope: this,
+			loop: true,
+		});
+
+		// Add collision detection between player and obstacles
+		this.physics.add.collider(
+			this.player,
+			this.obstacles,
+			this.hitObstacle,
+			undefined,
+			this
+		);
+
 		if (this.input.keyboard) {
 			this.keyboardInput = this.input.keyboard.createCursorKeys();
 		}
@@ -90,6 +109,39 @@ export class Game extends Scene {
 			fontSize: "25px",
 			color: "#fff",
 		});
+	}
+
+	// Function to spawn obstacles
+	spawnObstacle() {
+		const x = Phaser.Math.Between(50, this.physics.world.bounds.width - 50);
+		const y = Phaser.Math.Between(
+			50,
+			this.physics.world.bounds.height - 50
+		);
+
+		// Create a new obstacle at a random position
+		const obstacle = this.obstacles.create(x, y, "obstacleImage");
+		obstacle.setImmovable(true); // Obstacles should not move when hit by other objects
+		obstacle.setCollideWorldBounds(true);
+
+		// Optionally add movement (e.g., vertical oscillation)
+		this.tweens.add({
+			targets: obstacle,
+			y: { start: y - 50, to: y + 50 },
+			duration: 2000,
+			yoyo: true,
+			repeat: -1,
+		});
+	}
+
+	hitObstacle() {
+		// Reduce points as a penalty
+		this.points = Math.max(this.points - 5, 0); // Ensure points don’t go negative
+		this.textScore.setText(`Punkte: ${this.points}`);
+
+		// Apply a temporary effect (e.g., reduce paddle size)
+		this.player.setScale(0.5);
+		this.time.delayedCall(3000, () => this.player.setScale(1), [], this); // Reset after 3 seconds
 	}
 
 	spawnPowerUp() {
