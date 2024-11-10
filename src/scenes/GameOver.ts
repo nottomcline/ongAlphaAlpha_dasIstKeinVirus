@@ -75,7 +75,11 @@ export class GameOver extends Scene {
 				strokeThickness: 8,
 				align: "center",
 			})
-			.setOrigin(0.5);
+			.setOrigin(0.5)
+			.setInteractive()
+			.on("pointerdown", () => {
+				this.scene.start("Game"); // Restart the game
+			});
 
 		this.noText = this.add
 			.text(550, 480, "Nein", {
@@ -86,7 +90,11 @@ export class GameOver extends Scene {
 				strokeThickness: 8,
 				align: "center",
 			})
-			.setOrigin(0.5);
+			.setOrigin(0.5)
+			.setInteractive()
+			.on("pointerdown", () => {
+				this.scene.start("MainMenu"); // Go to main menu
+			});
 	}
 
 	update() {

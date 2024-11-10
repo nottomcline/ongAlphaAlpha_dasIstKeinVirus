@@ -20,7 +20,11 @@ export class MainMenu extends Scene {
 			.text(
 				512,
 				460,
-				["Drücke die Leer-Taste", "um das Spiel zu starten"],
+				[
+					"Drücke die Leer-Taste",
+					"(oder klicke/ tippe)",
+					"um das Spiel zu starten",
+				],
 				{
 					fontFamily: "Arial Black",
 					fontSize: 38,
