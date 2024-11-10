@@ -1,5 +1,6 @@
 import { Boot } from "./scenes/Boot";
 import { Game as MainGame } from "./scenes/Game";
+import { Shop } from "./scenes/Shop";
 import { GameOver } from "./scenes/GameOver";
 import { MainMenu } from "./scenes/MainMenu";
 import { Preloader } from "./scenes/Preloader";
@@ -24,7 +25,7 @@ const config: Types.Core.GameConfig = {
 			gravity: { x: 0, y: 0 },
 		},
 	},
-	scene: [Boot, Preloader, MainMenu, MainGame, GameOver],
+	scene: [Boot, Preloader, MainMenu, MainGame, Shop, GameOver],
 };
 
 export default new Game(config);

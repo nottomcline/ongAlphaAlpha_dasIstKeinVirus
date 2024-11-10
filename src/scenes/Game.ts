@@ -18,20 +18,26 @@ export class Game extends Scene {
 	private obstacles: Phaser.Physics.Arcade.Group;
 	private loseAudio: Phaser.Sound.BaseSound;
 	private dvdHitSound: Phaser.Sound.BaseSound;
+	private geld: number = 100; // Initial geld for the player
+	private textGeld: Phaser.GameObjects.Text;
+	// @ts-ignore
+	private buyPowerUpButton: Phaser.GameObjects.Text;
+	// @ts-ignore
+	private buyExtraLifeButton: Phaser.GameObjects.Text;
+	// @ts-ignore
+	private buyPointsButton: Phaser.GameObjects.Text;
 
-	constructor(
-		player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody,
-		ball: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody,
-		cursors: Phaser.Types.Input.Keyboard.CursorKeys,
-		points: number = 0,
-		textScore: Phaser.GameObjects.Text
-	) {
+	private memeBall: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody | null =
+		null;
+	private memeVideos: string[] = [
+		"https://www.youtube.com/watch?v=dQw4w9WgXcQ", // Example meme video (Rickroll)
+		"https://www.youtube.com/watch?v=MtN1YnoL46Q", // Another meme video
+		"https://www.youtube.com/watch?v=9bZkp7q19f0", // Gangnam Style meme
+		// Add more meme URLs here...
+	];
+
+	constructor() {
 		super("Game");
-		this.player = player;
-		this.ball = ball;
-		this.keyboardInput = cursors;
-		this.points = points;
-		this.textScore = textScore;
 	}
 
 	// Receives the data from the previous scene
@@ -115,7 +121,6 @@ export class Game extends Scene {
 			this
 		);
 
-		// Create score text
 		this.textScore = this.add.text(10, 10, "Punkte: 0", {
 			fontFamily: "Monaco, Courier, monospace",
 			fontSize: "25px",
@@ -127,6 +132,54 @@ export class Game extends Scene {
 			fontSize: "25px",
 			color: "#fff",
 		});
+
+		this.textGeld = this.add.text(10, 70, "Geld: 100", {
+			fontFamily: "Monaco, Courier, monospace",
+			fontSize: "25px",
+			color: "#fff",
+		});
+
+		this.buyPowerUpButton = this.add
+			.text(
+				10,
+				130,
+				"Power-Up mit 50 Geld kaufen? (zum kaufen klicken)",
+				{
+					fontFamily: "Monaco, Courier, monospace",
+					fontSize: "20px",
+					color: "#fff",
+				}
+			)
+			.setInteractive()
+			.on("pointerdown", this.buyPowerUp, this);
+
+		this.buyExtraLifeButton = this.add
+			.text(
+				10,
+				160,
+				"Extra Leben mit 100 Geld kaufen? (zum kaufen klicken)",
+				{
+					fontFamily: "Monaco, Courier, monospace",
+					fontSize: "20px",
+					color: "#fff",
+				}
+			)
+			.setInteractive()
+			.on("pointerdown", this.buyExtraLife, this);
+
+		this.buyPointsButton = this.add
+			.text(
+				10,
+				190,
+				"10 extra Punkte mit 20 Geld kaufen? (zum kaufen klicken)",
+				{
+					fontFamily: "Monaco, Courier, monospace",
+					fontSize: "20px",
+					color: "#fff",
+				}
+			)
+			.setInteractive()
+			.on("pointerdown", this.buyPoints, this);
 	}
 
 	// Function to spawn obstacles
@@ -162,6 +215,45 @@ export class Game extends Scene {
 		this.time.delayedCall(3000, () => this.player.setScale(1), [], this); // Reset after 3 seconds
 	}
 
+	buyPowerUp() {
+		if (this.geld >= 50) {
+			this.geld -= 50;
+			this.textGeld.setText(`Geld: ${this.geld}`);
+			this.spawnPowerUp();
+		} else {
+			this.scene.start("Shop");
+		}
+	}
+
+	// Simulate buying an extra life
+	buyExtraLife() {
+		if (this.geld >= 100) {
+			this.geld -= 100;
+			this.textGeld.setText(`Geld: ${this.geld}`);
+			this.giveExtraLife();
+		} else {
+			this.scene.start("Shop");
+		}
+	}
+
+	// Simulate buying points
+	buyPoints() {
+		if (this.geld >= 20) {
+			this.geld -= 20;
+			this.points += 10; // Adding 10 points for 20 geld
+			this.textGeld.setText(`Geld: ${this.geld}`);
+			this.textScore.setText(`Punkte: ${this.points}`);
+		} else {
+			alert("Not enough geld!");
+		}
+	}
+
+	// Simulated extra life logic (e.g., increase player lives)
+	giveExtraLife() {
+		console.log("Extra Life Granted!");
+		// You can add more complex logic to grant an extra life here
+	}
+
 	spawnPowerUp() {
 		if (this.powerUp) return;
 
@@ -175,6 +267,48 @@ export class Game extends Scene {
 			undefined,
 			this
 		);
+	}
+
+	openMemeVideo() {
+		// Choose a random meme video from the list
+		const randomIndex = this.randomIntFromInterval(
+			0,
+			this.memeVideos.length - 1
+		);
+		const randomMemeVideo = this.memeVideos[randomIndex];
+
+		// Open the YouTube video in a new tab
+		window.open(randomMemeVideo, "_blank");
+	}
+
+	spawnMemeBall() {
+		if (this.memeBall) return; // Prevent multiple meme balls from spawning
+
+		const x = this.randomIntFromInterval(
+			100,
+			this.physics.world.bounds.width - 100
+		);
+		const y = this.randomIntFromInterval(
+			100,
+			this.physics.world.bounds.height - 100
+		);
+
+		// Create the meme ball sprite and give it properties
+		this.memeBall = this.physics.add.sprite(x, y, "memeBall").setScale(0.5);
+		this.memeBall.setCollideWorldBounds(true);
+		this.memeBall.setBounce(1, 1); // Make it bounce around
+
+		// You can add some random velocity for the meme ball to move around
+		this.memeBall.setVelocity(
+			Phaser.Math.Between(-200, 200),
+			Phaser.Math.Between(-200, 200)
+		);
+
+		// Add a click event to the meme ball sprite to open the meme video
+		if (this.memeBall) {
+			this.memeBall.setInteractive();
+			this.memeBall.on("pointerdown", this.openMemeVideo, this);
+		}
 	}
 
 	update() {
@@ -315,6 +449,12 @@ export class Game extends Scene {
 		const randomNumber = this.randomIntFromInterval(1, 100);
 		if (randomNumber <= spawnChance) {
 			this.spawnPowerUp();
+		}
+
+		const memeBallSpawnChance = 80;
+		const randomMemeBallChance = this.randomIntFromInterval(1, 100);
+		if (randomMemeBallChance <= memeBallSpawnChance) {
+			this.spawnMemeBall();
 		}
 	}
 
