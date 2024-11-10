@@ -6,7 +6,7 @@ export class Game extends Scene {
 	msg_text: Phaser.GameObjects.Text;
 	private player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
 	private ball: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
-	private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
+	private keyboardInput: Phaser.Types.Input.Keyboard.CursorKeys;
 	private points: number = 0;
 	private textScore: Phaser.GameObjects.Text;
 
@@ -20,7 +20,7 @@ export class Game extends Scene {
 		super("Game");
 		this.player = player;
 		this.ball = ball;
-		this.cursors = cursors;
+		this.keyboardInput = cursors;
 		this.points = points;
 		this.textScore = textScore;
 	}
@@ -54,8 +54,13 @@ export class Game extends Scene {
 		);
 
 		if (this.input.keyboard) {
-			this.cursors = this.input.keyboard.createCursorKeys();
+			this.keyboardInput = this.input.keyboard.createCursorKeys();
 		}
+
+		// Check if it's a touch-enabled device and add touch/mouse listeners
+		this.input.on("pointermove", (pointer: Phaser.Input.Pointer) => {
+			this.player.y = pointer.y;
+		});
 
 		this.player.setCollideWorldBounds(true);
 		this.ball.setCollideWorldBounds(true);
@@ -81,22 +86,22 @@ export class Game extends Scene {
 		// if ball is behind player game is over
 		if (this.ball.body.x > this.player.body.x) {
 			this.ball.disableBody(true, true);
-			this.restartGame();
+			this.resetGame();
 			this.scene.start("GameOver", { points: this.points });
 			return;
 		}
 		this.player.body.setVelocityY(0);
 
-		if (this.cursors.up.isDown) {
+		if (this.keyboardInput.up.isDown) {
 			this.player.body.setVelocityY(-650);
-		} else if (this.cursors.down.isDown) {
+		} else if (this.keyboardInput.down.isDown) {
 			this.player.body.setVelocityY(650);
 		}
 
 		this.changeBallVelocityOnBounce();
 	}
 
-	restartGame() {
+	resetGame() {
 		// Hide "Ende" text and reset game variables
 		this.textScore.setText("Punkte: 0");
 
