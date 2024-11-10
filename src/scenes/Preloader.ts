@@ -28,6 +28,10 @@ export class Preloader extends Scene {
 		this.load.image("logo", "logo.png");
 		this.load.image("ball", "ball.png");
 		this.load.image("paddle", "paddle.png");
+		this.load.audio(
+			"loseSound",
+			"GUARDIANO_DELLE_GALASSIE_E_DELLIPERSPAZIO.mp3"
+		);
 	}
 
 	create() {

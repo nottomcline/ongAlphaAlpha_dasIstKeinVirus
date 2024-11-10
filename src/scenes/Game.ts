@@ -15,6 +15,7 @@ export class Game extends Scene {
 	private experienceToLevelUp: number = 2;
 	private textLevel: Phaser.GameObjects.Text;
 	private obstacles: Phaser.Physics.Arcade.Group;
+	private loseAudio: Phaser.Sound.BaseSound; // Declare the audio
 
 	constructor(
 		player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody,
@@ -58,6 +59,7 @@ export class Game extends Scene {
 		);
 
 		this.obstacles = this.physics.add.group();
+		this.loseAudio = this.sound.add("loseSound"); // Assign the audio object
 
 		// Set up a timed event to spawn obstacles every few seconds
 		this.time.addEvent({
@@ -162,6 +164,7 @@ export class Game extends Scene {
 	update() {
 		// if ball is behind player game is over
 		if (this.ball.body.x > this.player.body.x) {
+			this.loseAudio.play();
 			this.ball.disableBody(true, true);
 			this.resetGame();
 			this.scene.start("GameOver", { points: this.points });
