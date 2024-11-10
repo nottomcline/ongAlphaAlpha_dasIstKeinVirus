@@ -36,6 +36,10 @@ export class MainMenu extends Scene {
 		if (this.input.keyboard) {
 			this.keyboardInput = this.input.keyboard.createCursorKeys();
 		}
+		// Check if it's a touch-enabled device and add touch/mouse listeners
+		this.input.on("pointerdown", () => {
+			this.scene.start("Game");
+		});
 	}
 
 	update() {
