@@ -5,10 +5,10 @@ export class Game extends Scene {
 	background: Phaser.GameObjects.Image;
 	private player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
 	private ball: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
-	private keyboardInput: Phaser.Types.Input.Keyboard.CursorKeys;
 	private powerUp: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody | null =
 		null;
 	private dvdLogo: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+	private keyboardInput: Phaser.Types.Input.Keyboard.CursorKeys;
 	private points: number = 0;
 	private textScore: Phaser.GameObjects.Text;
 	private level: number = 1;
@@ -16,7 +16,8 @@ export class Game extends Scene {
 	private experienceToLevelUp: number = 2;
 	private textLevel: Phaser.GameObjects.Text;
 	private obstacles: Phaser.Physics.Arcade.Group;
-	private loseAudio: Phaser.Sound.BaseSound; // Declare the audio
+	private loseAudio: Phaser.Sound.BaseSound;
+	private dvdHitSound: Phaser.Sound.BaseSound;
 
 	constructor(
 		player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody,
@@ -74,6 +75,7 @@ export class Game extends Scene {
 
 		this.obstacles = this.physics.add.group();
 		this.loseAudio = this.sound.add("loseSound"); // Assign the audio object
+		this.dvdHitSound = this.sound.add("dvdHitSound"); // Assign the audio object
 
 		// Set up a timed event to spawn obstacles every few seconds
 		this.time.addEvent({
@@ -208,7 +210,7 @@ export class Game extends Scene {
 		this.textScore.setText(`Punkte: ${this.points}`);
 
 		// Optionally: play a sound effect or trigger some animation
-		this.loseAudio.play();
+		this.dvdHitSound.play();
 	}
 
 	collectPowerUp() {
