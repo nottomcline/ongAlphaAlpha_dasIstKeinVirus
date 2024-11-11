@@ -216,7 +216,7 @@ export class Game extends Scene {
 		this.time.delayedCall(3000, () => this.player.setScale(1), [], this); // Reset after 3 seconds
 		this.isCollisionHit = true;
 		this.time.delayedCall(
-			10000,
+			3000,
 			() => {
 				this.isCollisionHit = false;
 			},
