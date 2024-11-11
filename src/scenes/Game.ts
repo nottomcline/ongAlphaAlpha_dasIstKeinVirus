@@ -9,17 +9,12 @@ export class Game extends Scene {
 		null;
 	private dvdLogo: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
 	private keyboardInput: Phaser.Types.Input.Keyboard.CursorKeys;
-	private points: number = 0;
 	private textScore: Phaser.GameObjects.Text;
-	private level: number = 1;
-	private experience: number = 0;
-	private experienceToLevelUp: number = 2;
 	private textLevel: Phaser.GameObjects.Text;
 	private obstacles: Phaser.Physics.Arcade.Group;
 	private loseAudio: Phaser.Sound.BaseSound;
 	private bgAudio: Phaser.Sound.BaseSound;
 	private dvdHitSound: Phaser.Sound.BaseSound;
-	private geld: number = 100; // Initial geld for the player
 	private textGeld: Phaser.GameObjects.Text;
 	// @ts-ignore
 	private buyPowerUpButton: Phaser.GameObjects.Text;
@@ -27,6 +22,12 @@ export class Game extends Scene {
 	private buyExtraLifeButton: Phaser.GameObjects.Text;
 	// @ts-ignore
 	private buyPointsButton: Phaser.GameObjects.Text;
+	private points: number = 0;
+	private level: number = 1;
+	private experience: number = 0;
+	private experienceToLevelUp: number = 2;
+	private geld: number = 100; // Initial geld for the player
+	private isCollisionHit: boolean = false;
 
 	private memeBall: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
 	private memeVideos: string[] = [
@@ -204,6 +205,8 @@ export class Game extends Scene {
 	}
 
 	hitObstacle() {
+		if (this.isCollisionHit) return; // prevent multiple triggers
+
 		// Reduce points as a penalty
 		this.points = Math.max(this.points - 5, 0); // Ensure points don’t go negative
 		this.textScore.setText(`Punkte: ${this.points}`);
@@ -211,6 +214,15 @@ export class Game extends Scene {
 		// Apply a temporary effect (e.g., reduce paddle size)
 		this.player.setScale(0.5);
 		this.time.delayedCall(3000, () => this.player.setScale(1), [], this); // Reset after 3 seconds
+		this.isCollisionHit = true;
+		this.time.delayedCall(
+			10000,
+			() => {
+				this.isCollisionHit = false;
+			},
+			[],
+			this
+		);
 	}
 
 	buyPowerUp() {
